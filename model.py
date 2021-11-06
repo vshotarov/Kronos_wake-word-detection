@@ -39,3 +39,9 @@ class WWDModel(nn.Module):
         x = self.dense(x)
         x = self.fc(x)
         return x
+
+    def classify(self, x):
+        outputs = self(x)
+        probabilities = F.softmax(outputs, dim=1)[0]
+        return torch.argmax(probabilities, dim=0)
+

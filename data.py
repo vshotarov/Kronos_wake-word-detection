@@ -6,6 +6,9 @@ import csv
 import random
 import librosa
 
+class Preprocessor(torchaudio.transforms.MelSpectrogram):
+    def __init__(self):
+        super(Preprocessor, self).__init__(n_mels=81, win_length=160, hop_length=80)
 
 class Augment(nn.Module):
     def __init__(self):
@@ -44,14 +47,13 @@ class Dataset(torch.utils.data.Dataset):
                         self.data_table.append(row)
                         self.ambience_table.append(row)
 
-        self.mel_spectrogram = torchaudio.transforms.MelSpectrogram(n_mels=81,
-                win_length=160, hop_length=80)
+        self.preprocessor = Preprocessor()
 
         if validation:
-            self.process = nn.Sequential(self.mel_spectrogram)
+            self.process = nn.Sequential(self.preprocessor)
         else:
             self.process = nn.Sequential(
-                    self.mel_spectrogram,
+                    self.preprocessor,
                     Augment())
 
     def __len__(self):
