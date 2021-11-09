@@ -5,6 +5,8 @@ import string
 import csv
 import random
 import librosa
+import os
+
 
 class Preprocessor(torchaudio.transforms.MelSpectrogram):
     def __init__(self):
@@ -25,9 +27,13 @@ class Augment(nn.Module):
 
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, csv_path, ambience_csv_path="ambience.csv", validation=False,
-            add_ambience_probability=0.5):
+            add_ambience_probability=0.5, wav_files_path="resampled_audio",
+            wake_label="hey kronos", stop_label="stop"):
         super(Dataset, self).__init__()
 
+        self.wav_files_path = wav_files_path
+        self.wake_label = wake_label
+        self.stop_label = stop_label
         self.validation = validation
         self.data_table = []
         with open(csv_path, newline='') as csvfile:
@@ -61,7 +67,7 @@ class Dataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         audio, _bytes, label = self.data_table[idx]
-        waveform, _ = torchaudio.load("resampled_audio/"+audio)
+        waveform, _ = torchaudio.load(os.path.join(self.wav_files_path, audio))
 
         # Normalize the waveform
         waveform, _ = torchaudio.sox_effects.apply_effects_tensor(waveform, 8000,
@@ -87,7 +93,8 @@ class Dataset(torch.utils.data.Dataset):
             if torch.rand(1, 1).item() < self.add_ambience_probability:
                 ambience_audio, _, _ = self.ambience_table[
                         random.randint(0, len(self.ambience_table)-1)]
-                ambience_waveform, _ = torchaudio.load("resampled_audio/"+ambience_audio)
+                ambience_waveform, _ = torchaudio.load(os.path.join(
+                    self.wav_files_path, ambience_audio))
 
                 start_point = random.randint(0, ambience_waveform.shape[1]-1-24000)
                 ambience_waveform = ambience_waveform[0][start_point:start_point+24000].clone()
@@ -99,9 +106,9 @@ class Dataset(torch.utils.data.Dataset):
 
         spectrogram = self.process(waveform)
 
-        if label == "hey kronos":
+        if label == self.wake_label:
             label_vector = [0]
-        elif label == "stop":
+        elif label == self.stop_label:
             label_vector = [1]
         else:
             label_vector = [2]
