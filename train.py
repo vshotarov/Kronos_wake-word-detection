@@ -160,9 +160,11 @@ the room you're planning to use the virtual assistant in.
     parser.add_argument("ambience_csv",
         help="path to the dataset .csv file storing the names of ambience .wav files")
     parser.add_argument("-ps", "--path_to_save_model", default="saved_model.torch",
-        help="path to save the trained model at. By default it's a file called saved_model.torch in the current directory.")
+        help="path to save the trained model at. By default it's a file called "
+             "saved_model.torch in the current directory.")
     parser.add_argument("-pw", "--path_to_wav", default="wav",
-        help="path to the directory storing the .wav files specified in the datasets. By default it's 'wav' directory in the current directory.")
+        help="path to the directory storing the .wav files specified in the "
+             "datasets. By default it's 'wav' directory in the current directory.")
     parser.add_argument("-lw", "--label_wake", default="hey kronos",
         help="the text in the wake samples. By default it's 'hey kronos'.")
     parser.add_argument("-ls", "--label_stop", default="stop",
