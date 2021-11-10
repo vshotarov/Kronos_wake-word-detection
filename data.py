@@ -42,6 +42,8 @@ class Dataset(torch.utils.data.Dataset):
                 if i > 0:
                     self.data_table.append(row)
 
+        # Stick the ambience samples at the back of the table
+        # with the regular samples
         self.num_real_samples = len(self.data_table)
         self.ambience_table = []
         self.add_ambience_probability = add_ambience_probability if not validation else 0
