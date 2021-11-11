@@ -92,8 +92,8 @@ def train(train_dataset, validation_dataset, test_dataset,
 
                 if num_wrong / float(num_samples) + val_running_loss / (i+1) < best_val_loss:
                     best_val_loss = num_wrong / float(num_samples) + val_running_loss / (i+1)
-                    torch.save(model, "saved_model.torch")
-                    print("saved model to saved_model.torch")
+                    torch.save(model, path_to_save_model)
+                    print("saved model to", path_to_save_model)
 
     except KeyboardInterrupt:
         # We assume that a keyboard interupt means stop training, but still carry on to test
